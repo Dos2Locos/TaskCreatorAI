@@ -7,8 +7,6 @@ A modern web application that transforms natural language task descriptions into
 - 🌐 Multi-language support (English 🇬🇧, Spanish 🇪🇸, Chinese 🇨🇳)
 - 🤖 AI-powered task transformation using OpenAI
 - 📋 Copy-to-clipboard functionality
-- 💅 Modern, responsive UI with dark mode support
-- 🔢 JSON display with line numbers
 - 🔄 Real-time language switching
 - 🐳 Docker support for easy deployment
 
@@ -106,6 +104,31 @@ Language files are located in `static/js/i18n/` and can be easily extended to su
 ### Styling
 
 The application uses custom CSS with CSS variables for theming. Modify `static/css/styles.css` to customize the appearance.
+
+## API Usage
+
+The application provides an API endpoint for transforming tasks into JSON events:
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"task": "Buy groceries tomorrow morning"}' \
+  http://localhost:5000/transform
+```
+
+The response will contain the transformed JSON event.
+
+```json
+{
+  "event": {
+    "name": "Buy groceries",
+    "description": "Buy groceries tomorrow morning",
+    "date": "2023-08-25T10:00:00",
+    "assigned_to": "John Doe",
+    "emoji_icon": "🛒"
+  }
+}
+```
 
 ## 📄 License
 
