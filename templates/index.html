@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Transformer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        #task-input {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        #result {
+            white-space: pre-wrap;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Natural Language Task Transformer</h1>
+    <textarea id="task-input" placeholder="Enter your task description here..."></textarea>
+    <button onclick="transformTask()">Transform to JSON</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function transformTask() {
+            const taskInput = document.getElementById('task-input');
+            const resultArea = document.getElementById('result');
+
+            try {
+                const response = await fetch('/transform', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ task: taskInput.value })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultArea.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    resultArea.textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultArea.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

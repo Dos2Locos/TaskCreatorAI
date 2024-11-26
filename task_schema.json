@@ -1,0 +1,82 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Task",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": ["string"],
+        "description": "Title of the task"
+      },
+      "description": {
+        "type": ["string", "null"],
+        "description": "Detailed description of the task"
+      },
+      "is_completed": {
+        "type": ["boolean", "null"],
+        "description": "Indicates if the task is completed",
+        "default": false
+      },
+      "due_date": {
+        "type": ["string", "null"],
+        "description": "The deadline for the task, if applicable"
+      },
+      "start_date": {
+        "type": ["string", "null"],
+        "description": "Start date of the task or event, if applicable"
+      },
+      "end_date": {
+        "type": ["string", "null"],
+        "description": "End date of the task or event, if applicable"
+      },
+      "assigned_to": {
+        "type": ["string", "null"],
+        "description": "The person to whom the task is assigned"
+      },
+      "subject": {
+        "type": ["string", "null"],
+        "description": "The subject or person related to the task"
+      },
+      "location": {
+        "type": ["string", "null"],
+        "description": "Location where the task is to be performed, if applicable"
+      },
+      "is_recurring": {
+        "type": ["boolean", "null"],
+        "description": "Indicates if the task is recurring",
+        "default": false
+      },
+      "recurrence": {
+        "type": ["object", "null"],
+        "description": "Details about the recurrence pattern, if the task is recurring",
+        "properties": {
+          "frequency": {
+            "type": ["string", "null"],
+            "enum": ["daily", "weekly", "monthly", "yearly"],
+            "description": "The frequency of recurrence"
+          },
+          "interval": {
+            "type": ["integer", "null"],
+            "description": "The interval of recurrence, e.g., every 2 weeks",
+            "minimum": 1
+          },
+          "days_of_week": {
+            "type": ["array", "null"],
+            "items": {
+              "type": ["string"]
+            },
+            "description": "The days of the week on which the task recurs (for weekly recurrence)"
+          },
+          "nth_weekday_of_month": {
+            "type": ["integer", "null"],
+            "description": "Defines the nth weekday recurrence in a month, e.g., 1st Friday"
+          }
+        },
+        "required": ["frequency"]
+      },
+      "emoji_icon": {
+        "type": ["string", "null"],
+        "description": "An emoji representing the task"
+      }
+    },
+    "required": ["title", "emoji_icon"]
+  }
