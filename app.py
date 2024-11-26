@@ -1,16 +1,20 @@
 import os
 import json
 from openai import OpenAI
+
 from flask import Flask, request, render_template, jsonify
 from dotenv import load_dotenv
-from TaskEvent import TaskEvent, RecurrenceFrequency
+from Task import Task
 from datetime import datetime
+from textwrap import dedent
+
 
 # Load environment variables
 load_dotenv()
 
 # Configure OpenAI API
-api_key = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+model = os.getenv('OPENAI_MODEL')
 
 system_prompt = """
 Eres un modelo de lenguaje especializado en convertir descripciones de tareas en JSON estructurados. Sigue estas reglas para cada tarea o nota:
@@ -32,7 +36,7 @@ Eres un modelo de lenguaje especializado en convertir descripciones de tareas en
    - Si no es recurrente, usa `false` y omite `recurrence`.
 9. **`emoji_icon`**: Obligatorio. Incluye un emoji representativo.
 
-**Nota**: No incluyas campos sin valor. Siempre rellena `due_date` si hay una fecha mencionada.
+**Nota**: No incluyas campos sin valor. Siempre rellena `due_date` si hay una fecha mencionada. Sigue detenidamente las instrucciones anteriores y usa el formato correcto.
 """
 
 app = Flask(__name__)
@@ -43,40 +47,38 @@ def index():
 
 @app.route('/transform', methods=['POST'])
 def transform_task():
+    # Get the task description from the request
+    task_description = request.json.get('task', '')
+
+    if not task_description:
+        return jsonify({"error": "No task description provided"}), 400
+
+    # Add the current date and time to the system prompt
+    current_system_prompt = f"{system_prompt}\nLa fecha y hora actual es {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
+    messages = [
+        {
+            "role": "system",
+            "content": dedent(current_system_prompt)
+        },
+        {
+            "role": "user",
+            "content": task_description
+        }
+    ]
+
     try:
-        # Get the task description from the request
-        task_description = request.json.get('task', '')
-        
-        if not task_description:
-            return jsonify({"error": "No task description provided"}), 400
+        # Call the OpenAI API
+        completion = client.beta.chat.completions.parse(model=model,
+        messages=messages,
+        response_format=Task)
 
-        client = OpenAI(api_key=api_key)
+        event_response = completion.choices[0].message.parsed
 
-        system_prompt = f"{system_prompt}\nLa fecha y hora actual es {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-
-        completion = client.beta.chat.completions.parse(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt
-                },
-                {
-                    "role": "user",
-                    "content": f"Transform the following task description into a JSON object: {task_description}"
-                }
-            ],
-            response_format=TaskEvent,
-        )
-
-        event = completion.choices[0].message.parsed
-       
-        return event
-    
-    except json.JSONDecodeError:
-        return jsonify({"error": "Failed to parse the generated JSON"}), 500
+        return jsonify(event_response.dict())
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

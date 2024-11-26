@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Transformer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,12 +18,13 @@
             height: 150px;
             margin-bottom: 10px;
         }
-        #result {
+        pre[class*="language-"] {
             white-space: pre-wrap;
             background-color: #f4f4f4;
             padding: 15px;
             border-radius: 5px;
             margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         button {
             background-color: #4CAF50;
@@ -41,8 +43,10 @@
     <h1>Natural Language Task Transformer</h1>
     <textarea id="task-input" placeholder="Enter your task description here..."></textarea>
     <button onclick="transformTask()">Transform to JSON</button>
-    <pre id="result"></pre>
+    <pre><code id="result" class="language-json"></code></pre>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
     <script>
         async function transformTask() {
             const taskInput = document.getElementById('task-input');
@@ -64,8 +68,10 @@
                 } else {
                     resultArea.textContent = `Error: ${data.error}`;
                 }
+                Prism.highlightElement(resultArea);
             } catch (error) {
                 resultArea.textContent = `Error: ${error.message}`;
+                Prism.highlightElement(resultArea);
             }
         }
     </script>
