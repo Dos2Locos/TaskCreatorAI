@@ -82,6 +82,11 @@ def transform_task():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.getenv('PORT', 5000))
+    host = os.getenv('HOST', '0.0.0.0')
+    app.run(host=host, port=port, debug=os.getenv('FLASK_DEBUG', '0') == '1')
