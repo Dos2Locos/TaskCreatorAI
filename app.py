@@ -16,6 +16,11 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 model = os.getenv('OPENAI_MODEL')
 
+# Initialize Flask app with explicit static folder
+app = Flask(__name__, 
+           static_url_path='/static',
+           static_folder='static')
+
 system_prompt = """
 Eres un modelo de lenguaje especializado en convertir descripciones de tareas en JSON estructurados. Sigue estas reglas para cada tarea o nota:
 
@@ -38,8 +43,6 @@ Eres un modelo de lenguaje especializado en convertir descripciones de tareas en
 
 **Nota**: No incluyas campos sin valor. Siempre rellena `due_date` si hay una fecha mencionada. Sigue detenidamente las instrucciones anteriores y usa el formato correcto.
 """
-
-app = Flask(__name__)
 
 @app.route('/')
 def index():
