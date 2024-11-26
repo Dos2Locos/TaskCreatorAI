@@ -1,0 +1,11 @@
+# Ignore file for virtual environment
+venv
+
+# Ignore temp jupiter notebook files and folders
+.ipynb_checkpoints
+
+# Ignore pycache
+__pycache__
+
+# Ignore vscode
+.vscode
