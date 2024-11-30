@@ -13,7 +13,7 @@ from textwrap import dedent
 load_dotenv()
 
 # Configure OpenAI API
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+client = OpenAI()  # It will automatically use OPENAI_API_KEY from environment
 model = os.getenv('OPENAI_MODEL')
 
 # Initialize Flask app with explicit static folder
